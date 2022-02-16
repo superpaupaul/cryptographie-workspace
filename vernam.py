@@ -48,12 +48,18 @@ def sum_puissance(n):
 def decomposition_primaire(N):
     res = []
     primes = primes_list(N)
-    for i in range(1,N):
-        if N%i == 0:
+    for i in range(len(primes)-1,0,-1):
+        prime = primes[i]
+        if prime != 1 and N%prime == 0:
             puissance = 1
-            while(sum_puissance(res) * (i**puissance) <= N):
-                res.append((i,puissance))
+            current = []
+            while(sum_puissance(res) * (prime**puissance) <= N):
+                current.append((prime,puissance))
                 puissance += 1
+            if len(current) > 0:
+                res.append(current[-1])
+        if(sum_puissance(res) == N):
+            break
     return res
 
 print(decomposition_primaire(20))
