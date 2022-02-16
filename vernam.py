@@ -6,5 +6,55 @@ def vernam(message,key):
 
 # print(vernam([1,1,0,1,1,0,1,0],[0,1,1]))
 
+# def are_prime(n,v):
+#     res = True
+#     if n == 0 or v == 0:
+#         return False
+#     min = min(n,v)
+#     max = max(n,v)
+#     for i in range(min,1,-1):
+#         if min % i == 0 and max % i == 0:
+#             res = False
+#             break
+#     return res
+
+def is_prime(n):
+    res = True
+    if n == 0:
+        return False
+    if n == 1:
+        return True
+    for i in range(2,int(n/2)+1):
+        if n % i == 0:
+            res = False
+            break
+    return res
+
+def primes_list(n):
+    res = []
+    for i in range(1,n):
+        if is_prime(i):
+            res.append(i)
+    return res
+
+
+# Fonction qui donne la somme des facteur avec leur puissance
+def sum_puissance(n):
+    res = 1
+    for i in n:
+        res *= i[0]**i[1]
+    return res
+
 def decomposition_primaire(N):
-    return
+    res = []
+    primes = primes_list(N)
+    for i in range(1,N):
+        if N%i == 0:
+            puissance = 1
+            while(sum_puissance(res) * (i**puissance) <= N):
+                res.append((i,puissance))
+                puissance += 1
+    return res
+
+print(decomposition_primaire(20))
+
