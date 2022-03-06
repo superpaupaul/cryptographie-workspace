@@ -1,25 +1,14 @@
 import math
 
-
+# prend un message en entrée sous forme de liste d'entiers 1 ou 0
+# ainsi qu'une clé
+# renvoie le message chiffré par vernam (XOR message - clé)
 def vernam(message,key):
     res = []
     for i in range(len(message)):
         res.append(message[i] ^ key[i%len(key)])
     return res
 
-# print(vernam([1,1,0,1,1,0,1,0],[0,1,1]))
-
-# def are_prime(n,v):
-#     res = True
-#     if n == 0 or v == 0:
-#         return False
-#     min = min(n,v)
-#     max = max(n,v)
-#     for i in range(min,1,-1):
-#         if min % i == 0 and max % i == 0:
-#             res = False
-#             break
-#     return res
 
 def is_prime(n):
     res = True
@@ -40,14 +29,7 @@ def primes_list(n):
             res.append(i)
     return res
 
-
-# Fonction qui donne la somme des facteur avec leur puissance
-def sum_puissance(n):
-    res = 1
-    for i in n:
-        res *= i[0]**i[1]
-    return res
-
+# Renvoie le tableau de tuples de nombres premiers composant N
 def decomposition_primaire(N):
     res = []
     primes = primes_list(N)
@@ -61,7 +43,7 @@ def decomposition_primaire(N):
                 res.append((prime,puissance))
     return res
 
-# calculates indicateur d'euler de n 91 => 72; 20 =>  8
+# calcule l'indicateur d'Euler phi
 def calculate_phi(n):
     decomposition = decomposition_primaire(n)
     res = 1
@@ -69,20 +51,16 @@ def calculate_phi(n):
         res *= (c[0]-1)* c[0]**(c[1]-1)
     return res
 
-def calculate_euclide_etendu(a,b):
-    r0 = a
-    u0 = 1
-    v0 = 0
+# retourne l'inverse de a modulo b
+def euclide(a,b):
+    r, u, v, rp, up, vp = a, 1, 0, b, 0, 1
+    while rp != 0:
+        q = r//rp   # // donne le reste de la division 
+        r, u, v, rp, up, vp = rp, up, vp, r - q *rp, u - q*up, v - q*vp
+    #print ("L'inverse de ", a, " modulo ", b, "est :", u%b)
+    return (u%b)
 
-    r1 = b
-    u1 = 0
-    v1 = 1
-
-    while r1 != 0:
-        q = (r0 / r1)
-        (r0,u0,v0,r1,u1,v1) = (r1, u1, v1, r0 - q*r1, u0 - q*u1, v0 - q*v1)
-    return r0,u0,v0
-
+# Décompose un nombre en une liste de ses puissances de 2
 def decomposition_puissance_2(n):
     puissances2 = []
     res = []
@@ -100,7 +78,7 @@ def decomposition_puissance_2(n):
             courant += 2**puissance
     return res
 
-# calcule l'exponentiation modulaire de n^pow
+# calcule l'exponentiation modulaire de n puissance pow modulo mod => en gros calcule juste le reste de la division euclidienne
 def exponentiation_modulaire(n,pow,mod):
     puissances = decomposition_puissance_2(pow)
     res = 1
@@ -109,16 +87,20 @@ def exponentiation_modulaire(n,pow,mod):
         res = res % mod
     return res
 
+# Renvoie le message chiffré et le message chiffré 2x (initial)
 def chiffrement_rsa(n,p,e,M):
     N = n*p
     phi = calculate_phi(N)
-    d = calculate_euclide_etendu(e,phi)[0]
+    d = euclide(e,phi)
     M_prime = exponentiation_modulaire(M,e,N)
     M_prime_prime = exponentiation_modulaire(M_prime,d,N)
     return (M_prime,M_prime_prime)
 
 
-
-print(chiffrement_rsa(101,103,7,10331))
-
-print(calculate_euclide_etendu(7,10200))
+#print(vernam([1,0,0,1,0,0,1,1,1,0,0],[1,1,0]))
+#print(decomposition_puissance_2(50))
+n = 101
+p = 103
+e = 7
+M = 10331
+print(chiffrement_rsa(n,p,e,M))
